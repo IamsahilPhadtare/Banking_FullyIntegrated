@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body.qatar-theme {
+    background-color: #f7f7f7;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+}
+
+.text-maroon {
+    color: #8A1538;
+}
+
+.bg-maroon {
+    background-color: #8A1538 !important;
+}
+
+.navbar {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.navbar-brand img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.btn-maroon {
+    background-color: #8A1538;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.25s ease;
+}
+
+.btn-maroon:hover {
+    background-color: #6b0f2f;
+    transform: scale(1.03);
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+    padding: 24px;
+}
+
+input.form-control {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+input.form-control:focus {
+    border-color: #8A1538;
+    box-shadow: 0 0 0 0.25rem rgba(138, 21, 56, 0.15);
+}
+
+.table thead th {
+    background-color: #8A1538;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    font-size: 0.95rem;
+    padding: 12px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #fff1f5;
+    transition: background-color 0.3s ease;
+}
+
+.table .btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+}
+
+.footer {
+    background-color: #8A1538;
+    color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 16px 0;
+    margin-top: 40px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.modal-content {
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1rem 2rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem;
+}
+
+.btn:focus {
+    box-shadow: none !important;
+}
+
+
+
