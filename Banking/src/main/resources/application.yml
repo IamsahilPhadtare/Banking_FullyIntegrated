@@ -8,8 +8,8 @@ spring:
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:orcl
     driver-class-name: oracle.jdbc.OracleDriver
-    username: C##sahilp
-    password: myStrongPassword123
+    username: sgadre
+    password: Shruti5
     
   jpa:
     show-sql: true
