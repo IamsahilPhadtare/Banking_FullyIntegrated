@@ -11,15 +11,24 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendLoginConfirmationEmail(String toEmail, String customerName) {
+    public void sendLoginConfirmationEmail(String toEmail, String name) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setSubject("Login Successful - Banking App");
-        message.setText("Dear " + customerName
-                + ",\n\nYou have successfully logged in to your account.\n\nIf this wasn't you, please contact support immediately.\n\nBest regards,\nBanking Team");
-        // Use a proper "from" email address that matches your SMTP configuration
-        message.setFrom("noreply@qbank.com");
+        message.setSubject("🛡️ FEINBank - Login Alert");
 
+        String body = String.format(
+            "Hi %s,\n\n" +
+            "🎉 Welcome back to FEINBank!\n\n" +
+            "This is a confirmation that you have successfully logged into your account.\n" +
+            "If this wasn't you, please contact our support team.\n\n" +
+            "🔒 Stay safe,\n" +
+            "FEINBank Security Team\n" +
+            "--------------------------------------\n" +
+            "This is an automated message. Please do not reply to this email.",
+            name
+        );
+
+        message.setText(body);
         mailSender.send(message);
     }
 }
