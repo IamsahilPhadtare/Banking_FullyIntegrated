@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Overview | QBank</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/account.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #8D1B3D 0%, #A32845 50%, #B8355C 100%);
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+    .navbar {
+      background: linear-gradient(135deg, #8D1B3D 0%, #A32845 100%);
+      box-shadow: 0 4px 20px rgba(141,27,61,0.3);
+      border: none;
+      backdrop-filter: blur(10px);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 2rem;
+      color: #fff;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      border-radius: 25px;
+      font-weight: 600;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    .container-main {
+      max-width: 2000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      width: 100%;
+      border-radius: 25px;
+      box-shadow: 0 15px 45px rgba(141,27,61,0.15);
+      border: none;
+      margin-bottom: 2rem auto;
+      background: linear-gradient(135deg, #fff, #f8f9fa);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 60px rgba(141,27,61,0.2);
+    }
+    .card-header {
+      background: linear-gradient(135deg, #8D1B3D, #A32845);
+      color: #fff;
+      border-radius: 25px 25px 0 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 1.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    .card-body {
+      background: linear-gradient(135deg, #fff, #f8f9fa);
+      border-radius: 0 0 25px 25px;
+      padding: 2rem;
+    }
+    .summary-row {
+      display: flex;                  /* Allow flexible layout */
+    flex-wrap: wrap;               /* Wrap child elements if needed */
+    gap: 1rem;                     /* Optional spacing between items */
+
+    align-items: flex-start;       /* Align items to the top */
+    justify-content: flex-start;   /* Align content to start of row */
+
+    width: auto;                   /* Let row size based on children */
+    max-width: 100%; 
+    }
+    .summary-row > div {
+      min-width: 250px;
+      padding: 1rem;
+      background: rgba(141,27,61,0.02);
+      border-radius: 15px;
+      border-left: 4px solid #8D1B3D;
+    }
+    .quick-actions {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .quick-actions .btn {
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 1rem 2.5rem;
+      box-shadow: 0 8px 25px rgba(141,27,61,0.2);
+      background: linear-gradient(135deg, #8D1B3D, #A32845);
+      color: #fff;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    .quick-actions .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    .quick-actions .btn:hover::before {
+      left: 100%;
+    }
+    .quick-actions .btn:hover {
+      background: linear-gradient(135deg, #A32845, #B8355C);
+      color: #fff;
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(141,27,61,0.3);
+    }
+    .transactions-table {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(141,27,61,0.1);
+    }
+    .transactions-table th {
+      background: linear-gradient(135deg, #8D1B3D, #A32845);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      padding: 1.2rem 1.5rem;
+    }
+    .transactions-table td {
+      background: #fff;
+      border: none;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(141,27,61,0.1);
+    }
+    .transactions-table tr:hover td {
+      background: rgba(141,27,61,0.05);
+      transition: all 0.3s ease;
+    }
+    .date-time {
+      color: #970d0d;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      text-align: right;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+    }
+    .quote {
+      margin: 3rem auto 0 auto;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: #970d0d;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .account-select-container {
+      background: rgba(255,255,255,0.95);
+      padding: 1.5rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 25px rgba(141,27,61,0.15);
+      backdrop-filter: blur(10px);
+    }
+    .account-select {
+      padding: 1rem 1.5rem;
+      border-radius: 15px;
+      border: 2px solid #8D1B3D;
+      background: linear-gradient(135deg, #fff, #f8f9fa);
+      color: #8D1B3D;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(141,27,61,0.1);
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+    .account-select:focus {
+      outline: none;
+      border-color: #A32845;
+      box-shadow: 0 0 0 3px rgba(141,27,61,0.2);
+      transform: scale(1.02);
+    }
+    @media (max-width: 600px) {
+      .summary-row { flex-direction: column; gap: 3rem; }
+      .quick-actions { flex-direction: column; gap: 1rem; }
+      .container-main { margin: 1rem; padding: 0.5rem; }
+      .card-header { font-size: 1.2rem; padding: 1rem 1.5rem; }
+      .card-body { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="fas fa-university me-2"></i>QBank</a>
+      <div class="ms-auto">
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="container-main">
+    <div class="date-time" id="datetime">
+      <i class="fas fa-clock me-2"></i>
+    </div>
+    
+    <!-- Account Selection Dropdown -->
+    <div class="account-select-container">
+      <div style="display:flex;align-items:center;gap:1rem;justify-content:center;">
+        <label for="accountSelect" style="font-weight:700;color:#8D1B3D;font-size:1.2rem;">
+          <i class="fas fa-wallet me-2"></i>Select Account:
+        </label>
+        <select id="accountSelect" class="account-select" style="max-width:350px;">
+          <option value="">Loading...</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Account Summary Card -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-chart-line me-2"></i>Account & Customer Details
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <!-- Account Details -->
+          <div class="col-md-6 mb-3">
+            <h5 style="color:#8D1B3D;font-weight:700;">
+              <i class="fas fa-credit-card me-2"></i>Account Details
+            </h5>
+            <div style="background:rgba(141,27,61,0.02);padding:1.5rem;border-radius:15px;border-left:4px solid #8D1B3D;">
+              <p><strong><i class="fas fa-hashtag me-2"></i>Account No:</strong> <span id="summaryAccountNo">---</span></p>
+              <p><strong><i class="fas fa-tag me-2"></i>Type:</strong> <span id="summaryAccountType">---</span></p>
+              <p><strong><i class="fas fa-check-circle me-2"></i>Status:</strong> <span id="summaryStatus">---</span></p>
+              <p><strong><i class="fas fa-coins me-2"></i>Balance:</strong> ₹<span id="summaryBalance">0.00</span></p>
+              <p><strong><i class="fas fa-calendar me-2"></i>Application Date:</strong> <span id="summaryApplicationDate">---</span></p>
+            </div>
+          </div>
+          
+          <!-- Customer Details -->
+          <div class="col-md-6 mb-3">
+            <h5 style="color:#8D1B3D;font-weight:700;">
+              <i class="fas fa-user me-2"></i>Customer Details
+            </h5>
+            <div style="background:rgba(141,27,61,0.02);padding:1.5rem;border-radius:15px;border-left:4px solid #8D1B3D;">
+              <p><strong><i class="fas fa-user-circle me-2"></i>Name:</strong> <span id="summaryFullName">---</span></p>
+              <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> <span id="summaryEmail">---</span></p>
+              <p><strong><i class="fas fa-phone me-2"></i>Mobile:</strong> <span id="summaryMobileNo">---</span></p>
+              <p><strong><i class="fas fa-id-card me-2"></i>Aadhar No:</strong> <span id="summaryAadharNo">---</span></p>
+              <p><strong><i class="fas fa-file-alt me-2"></i>PAN No:</strong> <span id="summaryPanNo">---</span></p>
+              <p><strong><i class="fas fa-briefcase me-2"></i>Occupation:</strong> <span id="summaryOccupation">---</span></p>
+              <p><strong><i class="fas fa-money-bill-wave me-2"></i>Annual Income:</strong> ₹<span id="summaryAnnualIncome">---</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions mb-4">
+      <button id="quickTransferBtn" class="btn">
+        <i class="fas fa-paper-plane me-2"></i>Transfer
+      </button>
+      <button id="quickStatementBtn" class="btn">
+        <i class="fas fa-file-invoice me-2"></i>View Statement
+      </button>
+      <button id="quickPayeeBtn" class="btn">
+        <i class="fas fa-user-plus me-2"></i>Add Payee
+      </button>
+    </div>
+    
+    <!-- Recent Transactions Card -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-history me-2"></i>Recent Transactions
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table transactions-table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-calendar-alt me-2"></i>Date</th>
+                <th><i class="fas fa-info-circle me-2"></i>Description</th>
+                <th><i class="fas fa-rupee-sign me-2"></i>Amount</th>
+                <th><i class="fas fa-exchange-alt me-2"></i>Type</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsBody">
+              <tr>
+                <td colspan="4" class="text-center text-muted">
+                  <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <blockquote class="quote">
+      <i class="fas fa-quote-left me-2"></i>
+      "Banking is not just about money, it's about trust."
+      <i class="fas fa-quote-right ms-2"></i>
+    </blockquote>
+  </div>
+  
+  <footer class="main-footer-bar">
+    <i class="fas fa-copyright me-2"></i>2024 QBank. All rights reserved.
+  </footer>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/js/account.js"></script>
+  <script>
+    // Enhanced Date & Time display with animation
+    document.addEventListener("DOMContentLoaded", () => {
+      function updateDateTime() {
+        const now = new Date();
+        const options = { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        };
+        document.getElementById("datetime").innerHTML = 
+          '<i class="fas fa-clock me-2"></i>' + now.toLocaleDateString('en-US', options);
+      }
+      
+      updateDateTime();
+      setInterval(updateDateTime, 1000); // Update every second
+    });
+  </script>
+</body>
+</html>
