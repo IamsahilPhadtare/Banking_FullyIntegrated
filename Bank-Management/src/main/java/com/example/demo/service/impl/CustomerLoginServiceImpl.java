@@ -32,7 +32,8 @@ public class CustomerLoginServiceImpl implements CustomerLoginService {
 		// Send email (handle email sending errors gracefully)
 		try {
 			System.out.println("Sending login confirmation email to: " + customer.getEmail());
-//			emailService.sendLoginConfirmationEmail(customer.getEmail(), customer.getFirstName());
+			// emailService.sendLoginConfirmationEmail(customer.getEmail(),
+			// customer.getFirstName());
 		} catch (Exception e) {
 			// Log the error but don't fail the login
 			System.err.println("Failed to send login confirmation email: " + e.getMessage());

@@ -812,6 +812,19 @@ function updateAccountSummary(account) {
   document.getElementById("summaryStatus").textContent = account.status || "---";
   document.getElementById("summaryBalance").textContent = account.balance ? account.balance.toFixed(2) : "0.00";
 }
+function updateCustomerSummary(customer) {
+  if (!customer) return;
+
+  document.getElementById("summaryFullName").textContent = customer.fullName || "---";
+  document.getElementById("summaryEmail").textContent = customer.email || "---";
+  document.getElementById("summaryMobileNo").textContent = customer.mobileNo || "---";
+  document.getElementById("summaryAadharNo").textContent = customer.aadharNo || "---";
+  document.getElementById("summaryPanNo").textContent = customer.panNo || "---";
+  document.getElementById("summaryOccupation").textContent = customer.occupation || "---";
+  document.getElementById("summaryAnnualIncome").textContent = customer.annualIncome
+    ? parseFloat(customer.annualIncome).toLocaleString("en-IN", { minimumFractionDigits: 2 })
+    : "0.00";
+}
 
 function loadRecentTransactions(accountNo) {
   if (!accountNo) return;

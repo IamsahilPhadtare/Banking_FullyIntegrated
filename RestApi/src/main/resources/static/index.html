@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fund Transfer - Banking Portal</title>
   <link rel="stylesheet" href="css/style.css">
-  
+  <link rel="stylesheet" href="css/additional-styles.css">
+  <script src="js/payment-actions.js" defer></script>
 </head>
 <body>
   <div class="container">
@@ -195,13 +196,14 @@
 
       <!-- Submit Section -->
       <div class="submit-section" id="submit-section" style="display: block;">
-        <h3 class="section-title">Confirm Transfer</h3>
+       
         <div id="transfer-summary" class="info-display show" style="margin-bottom: 1rem;">
           <div id="summary-content"></div>
         </div>
-        <div class="form-group full-width">
-  			<button id="submit-transfer" class="submit-btn">Submit Transfer</button>
-		</div>
+        <div class="button-group">
+          <button id="submit-transfer" class="submit-btn">Submit Transfer</button>
+          <a href="#" class="cancel-btn" id="cancelPaymentBtn">Cancel Payment</a>
+        </div>
         <div class="loading" id="loading">
           <div>Processing your transfer...</div>
         </div>

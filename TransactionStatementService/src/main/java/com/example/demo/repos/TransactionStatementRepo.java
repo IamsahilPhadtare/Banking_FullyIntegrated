@@ -58,9 +58,6 @@ public interface TransactionStatementRepo extends JpaRepository<TransactionState
     // Search by the new ACCOUNTNO field
     @Query("SELECT t FROM TransactionStatement t " +
            "WHERE t.accountNo = :accountNo " +
-           "AND (:type = 'ALL' OR " +
-           "     (:type = 'DEBIT' AND t.amount < 0) OR " +
-           "     (:type = 'CREDIT' AND t.amount > 0)) " +
            "AND (:fromTs IS NULL OR t.transactionDate >= :fromTs) " +
            "AND (:toTs IS NULL OR t.transactionDate < :toTs) " +
            "ORDER BY t.transactionDate DESC")

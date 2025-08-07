@@ -272,34 +272,20 @@
       
       if (response.ok) {
         submitBtn.textContent = '✅ Transfer Successful!';
-        showSuccess(`Transfer successful! Transaction ID: ${result.transactionId}`);
         
-        // Show success and option to make another transfer
-        setTimeout(() => {
-          if (confirm('Transfer completed successfully! Would you like to make another transfer?')) {
-            resetForm();
-            submitBtn.textContent = originalText;
-          } else {
-            window.close(); // Close the window/tab
-          }
-        }, 2000);
+        // Use the new transaction result function
+        handleTransactionSuccess(result);
       } else {
         submitBtn.textContent = '❌ Transfer Failed';
-        showError(result.error || 'Transfer failed');
         
-        // Reset button after 3 seconds
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-        }, 3000);
+        // Use the new transaction result function
+        handleTransactionFailure(result.error || 'Transfer failed');
       }
     } catch (error) {
       submitBtn.textContent = '❌ Transfer Failed';
-      showError('Transfer failed: ' + error.message);
       
-      // Reset button after 3 seconds
-      setTimeout(() => {
-        submitBtn.textContent = originalText;
-      }, 3000);
+      // Use the new transaction result function
+      handleTransactionFailure('Transfer failed: ' + error.message);
     } finally {
       submitBtn.disabled = false;
       loading.style.display = 'none';

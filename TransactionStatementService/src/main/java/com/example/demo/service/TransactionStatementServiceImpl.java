@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -42,16 +43,15 @@ public class TransactionStatementServiceImpl implements TransactionStatementServ
             System.out.println("Account: " + (a != null ? a.getHolderName() : "N/A"));
         } catch (Exception ignored) {}
         
-        List<TransactionStatement> transactions = repo.findBySenderAccountNoOrReceiverAccountNoOrderByTransactionDateDesc(accountNumber, accountNumber);
+        List<TransactionStatement> transactions = new ArrayList<>();
         
-        // If no results found with sender/receiver account search, try the accountNo field
-        if (transactions.isEmpty()) {
-            try {
-                Long accountNo = Long.parseLong(accountNumber);
-                transactions = repo.findByAccountNoOrderByTransactionDateDesc(accountNo);
-            } catch (NumberFormatException e) {
-                // If accountNumber is not a valid Long, stick with empty list
-            }
+        // First try to search using the ACCOUNTNO field for exact account match
+        try {
+            Long accountNo = Long.parseLong(accountNumber);
+            transactions = repo.findByAccountNoOrderByTransactionDateDesc(accountNo);
+        } catch (NumberFormatException e) {
+            // If accountNumber is not a valid Long, fall back to string search
+            transactions = repo.findBySenderAccountNoOrReceiverAccountNoOrderByTransactionDateDesc(accountNumber, accountNumber);
         }
         
         return transactions;
@@ -60,16 +60,15 @@ public class TransactionStatementServiceImpl implements TransactionStatementServ
     @Override
     public List<TransactionStatement> getLatestTransactions(String accountNumber, int limit) {
         Pageable pageable = PageRequest.of(0, Math.max(1, limit), Sort.by(Sort.Direction.DESC, "transactionDate"));
-        List<TransactionStatement> transactions = repo.findLatestForAccount(accountNumber, pageable);
+        List<TransactionStatement> transactions = new ArrayList<>();
         
-        // If no results found with sender/receiver account search, try the accountNo field
-        if (transactions.isEmpty()) {
-            try {
-                Long accountNo = Long.parseLong(accountNumber);
-                transactions = repo.findLatestByAccountNo(accountNo, pageable);
-            } catch (NumberFormatException e) {
-                // If accountNumber is not a valid Long, stick with empty list
-            }
+        // First try to search using the ACCOUNTNO field for exact account match
+        try {
+            Long accountNo = Long.parseLong(accountNumber);
+            transactions = repo.findLatestByAccountNo(accountNo, pageable);
+        } catch (NumberFormatException e) {
+            // If accountNumber is not a valid Long, fall back to string search
+            transactions = repo.findLatestForAccount(accountNumber, pageable);
         }
         
         return transactions;
@@ -136,21 +135,20 @@ public class TransactionStatementServiceImpl implements TransactionStatementServ
                 sort
         );
 
-        List<TransactionStatement> items =
-                repo.searchForAccount(accountNumber, effectiveType, fromTs, toTs, pageable);
-
-        // If no results found with sender/receiver account search, try the accountNo field
-        if (items.isEmpty()) {
-            try {
-                Long accountNo = Long.parseLong(accountNumber);
-                items = repo.searchByAccountNo(accountNo, effectiveType, fromTs, toTs, pageable);
-            } catch (NumberFormatException e) {
-                // If accountNumber is not a valid Long, stick with empty list
-            }
+        List<TransactionStatement> items = new ArrayList<>();
+        
+        // First try to search using the ACCOUNTNO field for exact account match
+        try {
+            Long accountNo = Long.parseLong(accountNumber);
+            items = repo.searchByAccountNo(accountNo, effectiveType, fromTs, toTs, pageable);
+        } catch (NumberFormatException e) {
+            // If accountNumber is not a valid Long, fall back to string search
+            items = repo.searchForAccount(accountNumber, effectiveType, fromTs, toTs, pageable);
         }
 
         return items.stream()
                 .map(t -> toDto(t, accountNumber))
+                .filter(dto -> filterByType(dto, effectiveType))
                 .collect(Collectors.toList());
     }
 
@@ -221,11 +219,78 @@ public class TransactionStatementServiceImpl implements TransactionStatementServ
         dto.setStatus(t.getStatus());
         dto.setRemarks(t.getRemarks());
 
-        boolean outgoing = accountNumber != null && accountNumber.equals(t.getSenderAccountNo());
+        // Determine transaction type and counterparty based on available data
+        boolean outgoing = false;
+        String counterpartyAccount = "";
+        
+        if (t.getSenderAccountNo() != null && t.getReceiverAccountNo() != null) {
+            // Old data model: use sender/receiver account logic
+            outgoing = accountNumber != null && accountNumber.equals(t.getSenderAccountNo());
+            counterpartyAccount = outgoing ? t.getReceiverAccountNo() : t.getSenderAccountNo();
+        } else {
+            // New data model: Need to determine DEBIT/CREDIT based on business logic
+            
+            // For now, let's use a simple approach:
+            // If database already has signed amounts, use that
+            boolean isNegativeAmount = t.getAmount() != null && t.getAmount().compareTo(new java.math.BigDecimal("0")) < 0;
+            
+            if (isNegativeAmount) {
+                outgoing = true; // Already negative = DEBIT
+            } else {
+                // If amount is positive, we need additional logic to determine if it's DEBIT or CREDIT
+                // For account-specific transactions, we'll need to determine based on context
+                
+                // Check remarks for keywords
+                String remarks = t.getRemarks() != null ? t.getRemarks().toLowerCase() : "";
+                boolean hasDebitKeywords = remarks.contains("withdraw") || remarks.contains("debit") || 
+                                         remarks.contains("payment") || remarks.contains("transfer out") ||
+                                         remarks.contains("sent") || remarks.contains("paid");
+                boolean hasCreditKeywords = remarks.contains("deposit") || remarks.contains("credit") || 
+                                          remarks.contains("received") || remarks.contains("transfer in") ||
+                                          remarks.contains("incoming");
+                
+                // Check payment method
+                String paymentMethod = t.getPaymentMethod() != null ? t.getPaymentMethod().toLowerCase() : "";
+                boolean isWithdrawalMethod = paymentMethod.contains("withdraw") || paymentMethod.contains("atm") ||
+                                           paymentMethod.contains("transfer");
+                
+                if (hasDebitKeywords || isWithdrawalMethod) {
+                    outgoing = true; // DEBIT
+                } else if (hasCreditKeywords) {
+                    outgoing = false; // CREDIT  
+                } else {
+                    // Default assumption: if no clear indicators and amount is positive, assume CREDIT
+                    outgoing = false;
+                }
+            }
+            
+            counterpartyAccount = "Account: " + (t.getAccountNo() != null ? t.getAccountNo().toString() : "N/A");
+        }
+        
         dto.setTxnType(outgoing ? "DEBIT" : "CREDIT");
-        dto.setCounterpartyAccount(outgoing ? t.getReceiverAccountNo() : t.getSenderAccountNo());
+        dto.setCounterpartyAccount(counterpartyAccount);
+        
+        // Set the amount with proper sign: negative for DEBIT, positive for CREDIT
+        if (t.getAmount() != null) {
+            BigDecimal signedAmount = outgoing ? t.getAmount().negate() : t.getAmount();
+            dto.setAmount(signedAmount);
+        }
+        
         dto.setBalanceAfterTxn(t.getBalanceAfterTxn());
         return dto;
+    }
+
+    private boolean filterByType(TransactionStatementDTO dto, String type) {
+        if ("ALL".equals(type)) {
+            return true;
+        }
+        if ("DEBIT".equals(type) && "DEBIT".equals(dto.getTxnType())) {
+            return true;
+        }
+        if ("CREDIT".equals(type) && "CREDIT".equals(dto.getTxnType())) {
+            return true;
+        }
+        return false;
     }
     
     @Override

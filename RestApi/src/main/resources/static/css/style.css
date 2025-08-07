@@ -7,7 +7,7 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #800020 0%, #8D1B3D 100%);
       min-height: 100vh;
       color: #333;
     }
@@ -60,13 +60,13 @@
     }
 
     .step.active {
-      background: #667eea;
+      background: #800020;
       color: white;
     }
 
     .step.inactive {
-      background: #e2e8f0;
-      color: #718096;
+      background: #f0e0e0;
+      color: #915858;
     }
 
     .form-section {
@@ -114,13 +114,13 @@
 
     input:focus, select:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: #800020;
+      box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
     }
 
     .validate-btn {
       padding: 0.5rem 1rem;
-      background: #48bb78;
+      background: #800020;
       color: white;
       border: none;
       border-radius: 6px;
@@ -128,10 +128,13 @@
       font-size: 0.85rem;
       margin-left: 0.5rem;
       transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(128, 0, 32, 0.3);
     }
 
     .validate-btn:hover {
-      background: #38a169;
+      background: #5D0018;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(128, 0, 32, 0.4);
     }
 
     .info-display {
@@ -148,15 +151,15 @@
     }
 
     .info-display.success {
-      background: #f0fff4;
-      border-color: #48bb78;
-      color: #22543d;
+      background: #fff5f7;
+      border-color: #800020;
+      color: #4A0010;
     }
 
     .info-display.error {
-      background: #fed7d7;
-      border-color: #e53e3e;
-      color: #742a2a;
+      background: #f8d7da;
+      border-color: #B00020;
+      color: #721c24;
     }
 
     .transfer-options {
@@ -177,14 +180,14 @@
     }
 
     .transfer-option:hover {
-      border-color: #667eea;
+      border-color: #800020;
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+      box-shadow: 0 8px 25px rgba(128, 0, 32, 0.15);
     }
 
     .transfer-option.selected {
-      border-color: #667eea;
-      background: #f7fafc;
+      border-color: #800020;
+      background: #fff5f7;
     }
 
     .option-icon {
@@ -213,7 +216,7 @@
     .submit-btn {
       width: 100%;
       padding: 1rem;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #800020, #4A0010);
       color: white;
       border: none;
       border-radius: 8px;
@@ -221,11 +224,32 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 10px #8D1B3D;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .submit-btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #A00020, #800020);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+
+    .submit-btn:hover:not(:disabled):before {
+      opacity: 1;
     }
 
     .submit-btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 10px 25px rgba(128, 0, 32, 0.5);
     }
 
     .submit-btn:disabled {
@@ -236,7 +260,7 @@
     .loading {
       display: none;
       text-align: center;
-      color: #667eea;
+      color: #800020;
       margin-top: 1rem;
     }
 
