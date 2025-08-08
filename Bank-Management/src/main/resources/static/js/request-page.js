@@ -28,7 +28,7 @@ document.getElementById("accountBtn").addEventListener("click", () => {
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("http://localhost:8080/bank/admin/requests")
+    fetch("http://localhost:8081/bank/admin/requests")
         .then(response => {
             if (!response.ok) {
                 throw new Error("Failed to fetch requests");
@@ -171,7 +171,7 @@ function approveRequest(requestID) {
     approveBtn.disabled = true;
     
     // API call to approve the request
-    fetch(`http://localhost:8080/bank/admin/handle-request/${requestID}`, {
+    fetch(`http://localhost:8081/bank/admin/handle-request/${requestID}`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ function rejectRequest(requestID) {
     rejectBtn.disabled = true;
     
     // API call to reject the request
-    fetch(`http://localhost:8080/bank/admin/handle-request/${requestID}`, {
+    fetch(`http://localhost:8081/bank/admin/handle-request/${requestID}`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',

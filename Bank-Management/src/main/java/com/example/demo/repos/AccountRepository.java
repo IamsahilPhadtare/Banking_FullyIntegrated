@@ -16,4 +16,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // Alternative query if the above doesn't work
     @Query("SELECT a FROM Account a JOIN FETCH a.customer c WHERE c.customerId = :customerId")
     List<Account> findAccountsWithCustomerByCustomerId(@Param("customerId") Long customerId);
+    
+    long countByStatus(String string);
+    
+    Long countByAccountTypeIgnoreCase( String accountType);
 }
