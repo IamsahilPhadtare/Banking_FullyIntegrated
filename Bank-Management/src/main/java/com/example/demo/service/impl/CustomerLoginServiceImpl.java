@@ -29,15 +29,13 @@ public class CustomerLoginServiceImpl implements CustomerLoginService {
 			throw new RuntimeException("Invalid password.");
 		}
 
-		// Send email (handle email sending errors gracefully)
 		try {
-			System.out.println("Sending login confirmation email to: " + customer.getEmail());
-			// emailService.sendLoginConfirmationEmail(customer.getEmail(),
-			// customer.getFirstName());
+		    System.out.println("Sending login confirmation email to: " + customer.getEmail());
+		    emailService.sendLoginConfirmationEmail(customer.getEmail(), customer.getFirstName());
 		} catch (Exception e) {
-			// Log the error but don't fail the login
-			System.err.println("Failed to send login confirmation email: " + e.getMessage());
+		    System.err.println("Failed to send login confirmation email: " + e.getMessage());
 		}
+
 
 		String fullName = customer.getFirstName() + " " + customer.getLastName();
 		return new CustomerLoginResponseDTO(customer.getCustomerId(), fullName, "Login Successful");

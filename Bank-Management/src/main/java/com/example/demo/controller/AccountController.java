@@ -66,7 +66,6 @@ public class AccountController {
     public void deleteAccount(@PathVariable Long accountNo) {
         service.deleteAccount(accountNo);
     }
-
     @GetMapping("/{accountNo}")
     public ResponseEntity<Account> getAccountByAccountNo(@PathVariable Long accountNo) {
         Account account = service.getByAccountId(accountNo);

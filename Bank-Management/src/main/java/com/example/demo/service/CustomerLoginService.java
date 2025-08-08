@@ -6,3 +6,4 @@ import com.example.demo.dto.CustomerLoginResponseDTO;
 public interface CustomerLoginService {
     CustomerLoginResponseDTO login(CustomerLoginRequestDTO request);
 }
+
