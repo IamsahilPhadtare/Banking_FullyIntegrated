@@ -21,7 +21,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByCustomerIdAndStatus(Long customerId, com.example.demo.entities.AccountStatus status);
 
     // Check if account exists and is active
-    @Query("SELECT COUNT(a) > 0 FROM Account a WHERE a.accountNo = :accountNo AND a.status = 'active'")
+    @Query("SELECT COUNT(a) > 0 FROM Account a WHERE a.accountNo = :accountNo AND a.status = 'Active'")
     boolean existsByAccountNoAndStatusActive(Long accountNo);
 
     // Get account balance

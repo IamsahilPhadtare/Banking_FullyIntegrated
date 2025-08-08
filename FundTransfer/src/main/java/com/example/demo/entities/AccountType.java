@@ -1,9 +1,11 @@
 package com.example.demo.entities;
 
 public enum AccountType {
-    savings,
-    current,
-    loan,
-    fixed_deposit,
-    recurring_deposit
+    SAVINGS,
+    CURRENT,
+    SALARIED,
+    SALARY,
+    LOAN,
+    FIXED_DEPOSIT,
+    RECURRENT_DEPOSIT,
 }

@@ -332,7 +332,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Map<String, Object> validateIfscCode(String ifscCode) {
         return accountValidationService.validateIfscCode(ifscCode);
     }
-    
+
     /**
      * Validates account number with IFSC and returns account holder information
      * 
@@ -369,7 +369,7 @@ public class TransactionServiceImpl implements TransactionService {
             result.put("accountType",
                     account.getAccountType() != null ? account.getAccountType().toString() : "savings");
             result.put("balance", account.getBalance());
-            result.put("status", account.getStatus() != null ? account.getStatus().toString() : "active");
+            result.put("status", account.getStatus() != null ? account.getStatus().toString() : "Active");
 
             return result;
         } catch (Exception e) {

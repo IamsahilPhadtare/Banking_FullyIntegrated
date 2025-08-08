@@ -133,9 +133,9 @@ body.qatar-theme {
 }
 
 /* OJET Buttons */
-.oj-button,
-.oj-button.oj-default,
-.oj-button.oj-primary {
+.oj-c-button,
+.oj-c-button.oj-default,
+.oj-c-button.oj-primary {
     background-color: #8A1538;
     color: #fff;
     border-radius: 8px;
@@ -145,16 +145,16 @@ body.qatar-theme {
     transition: all 0.3s ease;
 }
 
-.oj-button:hover,
-.oj-button.oj-hover,
-.oj-button.oj-primary:hover {
+.oj-c-button:hover,
+.oj-c-button.oj-hover,
+.oj-c-button.oj-primary:hover {
     background-color: #6b0f2f;
     transform: scale(1.03);
 }
 
 /* OJET Inputs */
-.oj-input-text,
-.oj-text-field {
+.oj-c-input-text,
+.oj-c-text-field {
     border-radius: 10px;
     border: 1px solid #ddd;
     padding: 10px 14px;
@@ -162,7 +162,7 @@ body.qatar-theme {
     transition: all 0.3s ease;
 }
 
-.oj-input-text:focus,
+.oj-c-input-text:focus,
 .oj-text-field:focus {
     border-color: #8A1538;
     box-shadow: 0 0 0 0.25rem rgba(138, 21, 56, 0.15);

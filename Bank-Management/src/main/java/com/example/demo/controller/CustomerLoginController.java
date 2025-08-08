@@ -45,6 +45,20 @@ public class CustomerLoginController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{customerId}/accounts")
+    public ResponseEntity<List<AccountDTO>> getCustomerAccounts(@PathVariable Long customerId) {
+        try {
+            System.out.println("Controller: Fetching accounts for customer: " + customerId);
+            List<AccountDTO> accounts = getAccountsByCustomerId(customerId);
+            System.out.println("Controller: Returning " + accounts.size() + " accounts");
+            return ResponseEntity.ok(accounts);
+        } catch (Exception e) {
+            System.err.println("Controller error fetching accounts for customer " + customerId + ": " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(new ArrayList<>());
+        }
+    }
+
     public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
         List<Account> accounts = accountRepo.findByCustomer_CustomerId(customerId);
         if (accounts.isEmpty()) {
