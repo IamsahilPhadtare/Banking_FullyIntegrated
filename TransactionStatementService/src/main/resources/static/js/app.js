@@ -234,7 +234,6 @@ async function fetchAccountBalance() {
   }
 }
 
-// ====== Rendering Functions ======
 function renderRows(items) {
   els.resultsBody.innerHTML = "";
   if (!Array.isArray(items) || items.length === 0) {
@@ -246,7 +245,7 @@ function renderRows(items) {
     const amount = parseFloat(it.amount || 0);
     const isCredit = amount > 0;
     const amountClass = isCredit ? 'text-success' : 'text-danger';
-    const amountPrefix = isCredit ? '+' : '';
+    const amountPrefix = isCredit ? '+' : '-';
     
     const typeClass = it.txnType === "CREDIT" ? 'bg-success' : 'bg-danger';
     const statusClass = getStatusClass(it.status);

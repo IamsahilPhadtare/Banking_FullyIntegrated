@@ -30,8 +30,8 @@
         <div class="collapse navbar-collapse" id="navbarMenu">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link active" href="#">Payees</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Accounts</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Transfers</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" id="accountsBtn">Accounts</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" id="transferBtn">Transfers</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" id="logoutBtn">Logout</a></li>
             </ul>
         </div>
@@ -92,22 +92,16 @@
             </h5>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle text-center">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Bank</th>
-                        <th>Account #</th>
-                        <th>IFSC</th>
-                        <th>Nickname</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="payeesTableBody">
-                    <!-- Payees will be loaded dynamically -->
-                </tbody>
-            </table>
+        <!-- Action Cards Container -->
+        <div id="payeesCardsContainer" class="row g-3">
+            <!-- Payee cards will be loaded dynamically -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-5 d-none">
+            <i class="fas fa-users text-muted mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-muted">No Payees Found</h5>
+            <p class="text-muted">Add your first payee to get started</p>
         </div>
     </div>
 </div>
@@ -133,20 +127,36 @@
   </div>
 </div>
 
-<!-- 🧾 Use Payee Confirmation Modal -->
+<!-- 🧾 Transfer to Payee Confirmation Modal -->
 <div class="modal fade" id="confirmUseModal" tabindex="-1" aria-labelledby="confirmUseModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="confirmUseModalLabel">Use Payee</h5>
+        <h5 class="modal-title" id="confirmUseModalLabel">
+          <i class="fas fa-paper-plane me-2"></i>Transfer Money
+        </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        Do you want to transfer money to <strong id="usePayeeName">this payee</strong>?
+        <div class="text-center mb-3">
+          <i class="fas fa-money-bill-transfer text-primary mb-2" style="font-size: 2rem;"></i>
+        </div>
+        <p class="text-center">
+          You are about to initiate a money transfer to:<br>
+          <strong id="usePayeeName" class="text-primary">this payee</strong>
+        </p>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          You will be redirected to the transfer page to complete the transaction.
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Yes, Proceed</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-arrow-right me-1"></i>Proceed to Transfer
+        </button>
       </div>
     </div>
   </div>
@@ -202,6 +212,11 @@
         .then(data => {
             console.log('Login response:', data);
             currentCustomerId = customerId;
+            
+            // Store customer data in sessionStorage
+            const accountNo = getUrlParameter('accountNo') || '5';
+            storeCustomerData(customerId, accountNo);
+            
             updateCustomerDisplay();
             loadPayees();
         })
@@ -220,6 +235,11 @@
         .then(data => {
             if (data.includes('Current customer ID:')) {
                 currentCustomerId = data.split(':')[1].trim();
+                
+                // Store customer data in sessionStorage
+                const accountNo = getUrlParameter('accountNo') || sessionStorage.getItem('accountNo') || '5';
+                storeCustomerData(currentCustomerId, accountNo);
+                
                 updateCustomerDisplay();
                 loadPayees();
             } else {
@@ -271,34 +291,75 @@
         });
     }
 
-    // Function to display payees in table
+    // Function to display payees in action cards
     function displayPayees(payees) {
-        const tbody = document.getElementById('payeesTableBody');
-        tbody.innerHTML = '';
+        const container = document.getElementById('payeesCardsContainer');
+        const emptyState = document.getElementById('emptyState');
+        
+        container.innerHTML = '';
+        
+        if (payees.length === 0) {
+            emptyState.classList.remove('d-none');
+            return;
+        }
+        
+        emptyState.classList.add('d-none');
 
         payees.forEach(payee => {
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td>${payee.payeeName}</td>
-                <td>${payee.bankName || 'N/A'}</td>
-                <td>${payee.payeeAccountNumber}</td>
-                <td>${payee.ifscCode || 'N/A'}</td>
-                <td>${payee.nickname || 'N/A'}</td>
-                <td>
-                    <div class="d-flex justify-content-center gap-2">
-                        <button class="btn btn-sm btn-outline-danger delete-payee-btn"
+            const cardCol = document.createElement('div');
+            cardCol.className = 'col-lg-4 col-md-6 col-sm-12';
+            
+            cardCol.innerHTML = `
+                <div class="payee-action-card" data-payee-id="${payee.payeeId}">
+                    <div class="card-header">
+                        <div class="payee-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="payee-info">
+                            <h6 class="payee-name">${payee.payeeName}</h6>
+                            <span class="payee-nickname">${payee.nickname || 'No nickname'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="payee-detail">
+                            <div class="detail-item">
+                                <i class="fas fa-university text-maroon"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Bank</span>
+                                    <span class="detail-value">${payee.bankName || 'N/A'}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-credit-card text-maroon"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Account Number</span>
+                                    <span class="detail-value">${payee.payeeAccountNumber}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <i class="fas fa-code text-maroon"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">IFSC Code</span>
+                                    <span class="detail-value">${payee.ifscCode || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="btn btn-outline-danger btn-sm delete-payee-btn"
                                 data-payee-id="${payee.payeeId}"
                                 data-payee-name="${payee.payeeName}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-primary use-payee-btn"
-                                data-payee-id="${payee.payeeId}"
-                                data-payee-name="${payee.payeeName}">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-trash-alt me-1"></i>Delete
                         </button>
                     </div>
-                </td>
+                </div>
             `;
+            
+            container.appendChild(cardCol);
         });
 
         // Add event listeners for delete and use buttons
@@ -315,15 +376,6 @@
                 showDeleteModal(payeeId, payeeName);
             });
         });
-
-        // Use buttons
-        document.querySelectorAll('.use-payee-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const payeeId = this.getAttribute('data-payee-id');
-                const payeeName = this.getAttribute('data-payee-name');
-                showUseModal(payeeId, payeeName);
-            });
-        });
     }
 
     // Function to show delete modal
@@ -331,12 +383,6 @@
         document.getElementById('deletePayeeName').textContent = payeeName;
         document.getElementById('confirmDeleteBtn').setAttribute('data-payee-id', payeeId);
         new bootstrap.Modal(document.getElementById('deletePayeeModal')).show();
-    }
-
-    // Function to show use modal
-    function showUseModal(payeeId, payeeName) {
-        document.getElementById('usePayeeName').textContent = payeeName;
-        new bootstrap.Modal(document.getElementById('confirmUseModal')).show();
     }
 
     // Add Payee Form Handler
@@ -413,9 +459,60 @@
         });
     });
 
+    // Function to store customer data in sessionStorage
+    function storeCustomerData(customerId, accountNo) {
+        sessionStorage.setItem('customerId', customerId);
+        if (accountNo) {
+            sessionStorage.setItem('accountNo', accountNo);
+        }
+    }
+
+    // Function to get customer data from sessionStorage
+    function getCustomerData() {
+        return {
+            customerId: sessionStorage.getItem('customerId'),
+            accountNo: sessionStorage.getItem('accountNo')
+        };
+    }
+
+    // Accounts Button Handler
+    document.getElementById('accountsBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const customerData = getCustomerData();
+        const customerId = customerData.customerId || currentCustomerId;
+        
+        if (customerId) {
+            window.location.href = `http://localhost:8081/account.html?customerId=${customerId}`;
+        } else {
+            alert('Customer session not found. Please login again.');
+            window.location.href = 'http://localhost:8081/homepage.html';
+        }
+    });
+
+    // Transfer Button Handler
+    document.getElementById('transferBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const customerData = getCustomerData();
+        const customerId = customerData.customerId || currentCustomerId;
+        const accountNo = customerData.accountNo || '5'; // Default account number
+        
+        if (customerId) {
+            window.location.href = `http://localhost:8083/index.html?customerId=${customerId}&accountNo=${accountNo}`;
+        } else {
+            alert('Customer session not found. Please login again.');
+            window.location.href = 'http://localhost:8081/homepage.html';
+        }
+    });
+
     // Logout Handler
     document.getElementById('logoutBtn').addEventListener('click', function(e) {
         e.preventDefault();
+        
+        // Clear sessionStorage
+        sessionStorage.removeItem('customerId');
+        sessionStorage.removeItem('accountNo');
         
         fetch('/api/payees/logout', {
             method: 'POST',

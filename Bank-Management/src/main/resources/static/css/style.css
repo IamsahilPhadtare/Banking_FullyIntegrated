@@ -86,7 +86,7 @@ body {
 /* Parallax Section Styles */
 .parallax {
     height: 300px;
-    background-image: url('/images/qatar-city.jpg');
+    background-image: url('/images/handshake.jpg');
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
@@ -107,7 +107,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(141, 27, 61, 0.6); /* Maroon overlay */
+    /*background-color: rgba(141, 27, 61, 0.6); Maroon overlay */
     z-index: 1;
 }
 
